@@ -1,26 +1,48 @@
 import 'dart:convert';
+import 'dart:io';
 import 'package:http/http.dart' as http;
-import 'package:flutter_secure_storage/flutter_secure_storage.dart';
+import 'package:path_provider/path_provider.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class ApiService {
   static const String baseUrl = 'https://drive-api.ecos.uz';
-  static const _storage = FlutterSecureStorage(
-    aOptions: AndroidOptions(encryptedSharedPreferences: true),
-  );
 
-  static Future<String?> getToken() => _storage.read(key: 'accessToken');
+  static Future<File> _getTokenFile() async {
+    final dir = await getApplicationDocumentsDirectory();
+    return File('${dir.path}/auth_tokens.json');
+  }
+
+  static Future<String?> getToken() async {
+    try {
+      final file = await _getTokenFile();
+      if (!await file.exists()) return null;
+      final data = jsonDecode(await file.readAsString());
+      return data['accessToken'];
+    } catch (_) { return null; }
+  }
+
   static Future<void> saveTokens(String access, String refresh) async {
-    await _storage.write(key: 'accessToken', value: access);
-    await _storage.write(key: 'refreshToken', value: refresh);
-  }
-  static Future<void> clearTokens() async {
-    await _storage.delete(key: 'accessToken');
-    await _storage.delete(key: 'refreshToken');
+    final file = await _getTokenFile();
+    await file.writeAsString(jsonEncode({'accessToken': access, 'refreshToken': refresh}));
   }
 
-  static Future<String?> getPin() => _storage.read(key: 'appPin');
-  static Future<void> setPin(String pin) => _storage.write(key: 'appPin', value: pin);
-  static Future<void> clearPin() => _storage.delete(key: 'appPin');
+  static Future<void> clearTokens() async {
+    final file = await _getTokenFile();
+    if (await file.exists()) await file.delete();
+  }
+
+  static Future<String?> getPin() async {
+    final prefs = await SharedPreferences.getInstance();
+    return prefs.getString('appPin');
+  }
+  static Future<void> setPin(String pin) async {
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.setString('appPin', pin);
+  }
+  static Future<void> clearPin() async {
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.remove('appPin');
+  }
 
   static Future<Map<String, String>> _headers() async {
     final token = await getToken();

@@ -17,10 +17,11 @@ import '../screens/settings_screen.dart';
 
 import '../screens/register_screen.dart';
 import '../screens/pin_screen.dart';
+import '../screens/splash_screen.dart';
 
 class AppRouter {
   static final router = GoRouter(
-    initialLocation: '/phone',
+    initialLocation: '/splash',
     redirect: (context, state) {
       final auth = context.read<AuthService>();
       final isAuth = auth.isAuthenticated;
@@ -28,12 +29,12 @@ class AppRouter {
       final authRoutes = ['/phone', '/register', '/otp', '/password', '/set-password'];
       final isAuthRoute = authRoutes.contains(state.matchedLocation);
       
-      if (isLoading) return null;
+      if (isLoading) return state.matchedLocation == '/splash' ? null : '/splash';
       
       if (isAuth) {
         if (auth.isPinLocked && state.matchedLocation != '/pin' && state.matchedLocation != '/pin_setup') return '/pin';
         if (!auth.isPinLocked && state.matchedLocation == '/pin') return '/';
-        if (isAuthRoute) return '/';
+        if (isAuthRoute || state.matchedLocation == '/splash') return '/';
         return null;
       } else {
         if (!isAuthRoute) return '/phone';
@@ -41,6 +42,7 @@ class AppRouter {
       return null;
     },
     routes: [
+      GoRoute(path: '/splash', builder: (_, __) => const SplashScreen()),
       GoRoute(path: '/pin', builder: (_, __) => const PinScreen()),
       GoRoute(path: '/pin_setup', builder: (_, __) => const PinScreen(isSetup: true)),
       GoRoute(path: '/phone', builder: (_, __) => const PhoneEntryScreen()),
