@@ -82,8 +82,12 @@ class _PinScreenState extends State<PinScreen> {
         width: double.infinity,
         decoration: const BoxDecoration(gradient: AppColors.backgroundGradient),
         child: SafeArea(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
+          child: LayoutBuilder(
+            builder: (context, constraints) => SingleChildScrollView(
+              child: ConstrainedBox(
+                constraints: BoxConstraints(minHeight: constraints.maxHeight),
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
           children: [
             const SizedBox(height: 40),
             Icon(Icons.lock_outline, size: 64, color: AppColors.primary.withOpacity(0.8)),
@@ -110,7 +114,7 @@ class _PinScreenState extends State<PinScreen> {
                 );
               }),
             ),
-            const Spacer(),
+            const SizedBox(height: 40),
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: 40, vertical: 20),
               child: Column(
@@ -143,10 +147,20 @@ class _PinScreenState extends State<PinScreen> {
                 ],
               ),
             ),
-            const SizedBox(height: 40),
+            if (!widget.isSetup)
+              TextButton(
+                onPressed: () {
+                  context.read<AuthService>().logout();
+                },
+                child: Text("Hisobdan chiqish", style: TextStyle(color: Colors.white.withOpacity(0.5))),
+              ),
+            const SizedBox(height: 20),
           ],
         ),
-      ),
+              ),
+            ),
+          ),
+        ),
       ),
     );
   }
