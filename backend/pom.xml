@@ -1,0 +1,27 @@
+{
+  "name": "driveon",
+  "version": "0.0.1",
+  "description": "Spring Boot backend for DriveON",
+  "dependencies": {
+    "org.springframework.boot": "3.2.2",
+    "org.springframework.boot:spring-boot-starter-data-jpa": "",
+    "org.springframework.boot:spring-boot-starter-web": "",
+    "org.springframework.boot:spring-boot-starter-security": "",
+    "org.springdoc:springdoc-openapi-starter-webmvc-ui": "2.5.0",
+    "org.postgresql:postgresql": "42.7.3"
+  },
+  "build": {
+    "plugins": {
+      "org.apache.maven.plugins:maven-compiler-plugin": {
+        "version": "3.11.0",
+        "configuration": {
+          "source": "17",
+          "target": "17"
+        }
+      },
+      "org.apache.maven.plugins:maven-surefire-plugin": {
+        "version": "3.1.2"
+      }
+    }
+  }
+}
