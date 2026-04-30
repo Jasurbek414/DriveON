@@ -84,7 +84,7 @@ class _PhoneEntryScreenState extends State<PhoneEntryScreen> {
                   ),
                 ],
               ),
-              const Spacer(),
+              const SizedBox(height: 60),
               Center(child: Text("Kirish orqali foydalanish shartlariga\nrozilik bildirasiz", textAlign: TextAlign.center,
                 style: TextStyle(color: Colors.white.withOpacity(0.3), fontSize: 12))),
             ]),

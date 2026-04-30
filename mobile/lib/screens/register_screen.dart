@@ -72,6 +72,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                       : const Text('Davom etish'),
                   ),
                 ),
+                const SizedBox(height: 40),
               ]),
             ),
           ),
