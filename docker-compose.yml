@@ -1,0 +1,17 @@
+version: '3.8'
+services:
+  postgres:
+    image: postgres:15-alpine
+    container_name: driveon_db
+    environment:
+      POSTGRES_DB: driveon
+      POSTGRES_USER: driveon
+      POSTGRES_PASSWORD: driveon123
+    ports:
+      - "5432:5432"
+    volumes:
+      - driveon_data:/var/lib/postgresql/data
+    restart: unless-stopped
+
+volumes:
+  driveon_data:

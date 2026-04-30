@@ -15,6 +15,8 @@ import '../screens/add_card_screen.dart';
 import '../screens/profile_screen.dart';
 import '../screens/settings_screen.dart';
 
+import '../screens/register_screen.dart';
+
 class AppRouter {
   static final router = GoRouter(
     initialLocation: '/phone',
@@ -22,7 +24,7 @@ class AppRouter {
       final auth = context.read<AuthService>();
       final isAuth = auth.isAuthenticated;
       final isLoading = auth.isLoading;
-      final authRoutes = ['/phone', '/otp', '/password', '/set-password'];
+      final authRoutes = ['/phone', '/register', '/otp', '/password', '/set-password'];
       final isAuthRoute = authRoutes.contains(state.matchedLocation);
       if (isLoading) return null;
       if (!isAuth && !isAuthRoute) return '/phone';
@@ -31,6 +33,7 @@ class AppRouter {
     },
     routes: [
       GoRoute(path: '/phone', builder: (_, __) => const PhoneEntryScreen()),
+      GoRoute(path: '/register', builder: (_, __) => const RegisterScreen()),
       GoRoute(path: '/otp', builder: (_, state) => OtpScreen(phone: state.extra as String)),
       GoRoute(path: '/password', builder: (_, state) => PasswordScreen(phone: state.extra as String)),
       GoRoute(path: '/set-password', builder: (_, state) => SetPasswordScreen(phone: state.extra as String)),

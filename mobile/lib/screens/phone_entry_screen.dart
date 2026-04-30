@@ -38,9 +38,10 @@ class _PhoneEntryScreenState extends State<PhoneEntryScreen> {
       body: Container(
         decoration: const BoxDecoration(gradient: AppColors.backgroundGradient),
         child: SafeArea(
-          child: Padding(
-            padding: const EdgeInsets.all(24),
-            child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+          child: SingleChildScrollView(
+            child: Padding(
+              padding: const EdgeInsets.all(24),
+              child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
               const SizedBox(height: 60),
               Center(child: ShaderMask(
                 shaderCallback: (b) => AppColors.primaryGradient.createShader(b),
@@ -78,14 +79,7 @@ class _PhoneEntryScreenState extends State<PhoneEntryScreen> {
                 children: [
                   Text("Akkountingiz yo'qmi?", style: TextStyle(color: Colors.white.withOpacity(0.5))),
                   TextButton(
-                    onPressed: () {
-                      final phone = _ctrl.text.trim();
-                      if (phone.length == 13) {
-                         ApiService.sendOtp(phone).then((_) => context.go('/otp', extra: phone));
-                      } else {
-                         setState(() => _error = "Iltimos, avval raqamni to'liq kiriting");
-                      }
-                    },
+                    onPressed: () => context.go('/register'),
                     child: const Text("Ro'yxatdan o'tish", style: TextStyle(color: AppColors.primary, fontWeight: FontWeight.bold)),
                   ),
                 ],
@@ -94,6 +88,7 @@ class _PhoneEntryScreenState extends State<PhoneEntryScreen> {
               Center(child: Text("Kirish orqali foydalanish shartlariga\nrozilik bildirasiz", textAlign: TextAlign.center,
                 style: TextStyle(color: Colors.white.withOpacity(0.3), fontSize: 12))),
             ]),
+            ),
           ),
         ),
       ),
