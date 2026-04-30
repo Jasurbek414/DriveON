@@ -7,10 +7,15 @@ class AuthService extends ChangeNotifier {
   bool _isLoading = true;
   String? _error;
 
+  bool _isPinLocked = false;
+  bool _hasPin = false;
+
   Map<String, dynamic>? get user => _user;
   bool get isAuthenticated => _isAuthenticated;
   bool get isLoading => _isLoading;
   String? get error => _error;
+  bool get isPinLocked => _isPinLocked;
+  bool get hasPin => _hasPin;
 
   AuthService() { initialize(); }
 
@@ -20,8 +25,16 @@ class AuthService extends ChangeNotifier {
     try {
       _user = await ApiService.getMe();
       _isAuthenticated = true;
+      final pin = await ApiService.getPin();
+      _hasPin = pin != null;
+      if (_hasPin) _isPinLocked = true;
     } catch (_) { await ApiService.clearTokens(); }
     _isLoading = false; notifyListeners();
+  }
+
+  void unlockPin() {
+    _isPinLocked = false;
+    notifyListeners();
   }
 
   Future<bool> login(String phone, String password) async {
@@ -52,7 +65,12 @@ class AuthService extends ChangeNotifier {
 
   Future<void> logout() async {
     await ApiService.clearTokens();
-    _user = null; _isAuthenticated = false; _error = null;
+    await ApiService.clearPin();
+    _user = null; 
+    _isAuthenticated = false; 
+    _error = null;
+    _hasPin = false;
+    _isPinLocked = false;
     notifyListeners();
   }
 

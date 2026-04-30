@@ -16,6 +16,7 @@ import '../screens/profile_screen.dart';
 import '../screens/settings_screen.dart';
 
 import '../screens/register_screen.dart';
+import '../screens/pin_screen.dart';
 
 class AppRouter {
   static final router = GoRouter(
@@ -26,12 +27,22 @@ class AppRouter {
       final isLoading = auth.isLoading;
       final authRoutes = ['/phone', '/register', '/otp', '/password', '/set-password'];
       final isAuthRoute = authRoutes.contains(state.matchedLocation);
+      
       if (isLoading) return null;
-      if (!isAuth && !isAuthRoute) return '/phone';
-      if (isAuth && isAuthRoute) return '/';
+      
+      if (isAuth) {
+        if (auth.isPinLocked && state.matchedLocation != '/pin') return '/pin';
+        if (!auth.isPinLocked && state.matchedLocation == '/pin') return '/';
+        if (isAuthRoute) return '/';
+        return null;
+      } else {
+        if (!isAuthRoute) return '/phone';
+      }
       return null;
     },
     routes: [
+      GoRoute(path: '/pin', builder: (_, __) => const PinScreen()),
+      GoRoute(path: '/pin_setup', builder: (_, __) => const PinScreen(isSetup: true)),
       GoRoute(path: '/phone', builder: (_, __) => const PhoneEntryScreen()),
       GoRoute(path: '/register', builder: (_, __) => const RegisterScreen()),
       GoRoute(path: '/otp', builder: (_, state) => OtpScreen(phone: state.extra as String)),

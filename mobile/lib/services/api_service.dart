@@ -4,7 +4,9 @@ import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 
 class ApiService {
   static const String baseUrl = 'https://drive-api.ecos.uz';
-  static const _storage = FlutterSecureStorage();
+  static const _storage = FlutterSecureStorage(
+    aOptions: AndroidOptions(encryptedSharedPreferences: true),
+  );
 
   static Future<String?> getToken() => _storage.read(key: 'accessToken');
   static Future<void> saveTokens(String access, String refresh) async {
@@ -15,6 +17,10 @@ class ApiService {
     await _storage.delete(key: 'accessToken');
     await _storage.delete(key: 'refreshToken');
   }
+
+  static Future<String?> getPin() => _storage.read(key: 'appPin');
+  static Future<void> setPin(String pin) => _storage.write(key: 'appPin', value: pin);
+  static Future<void> clearPin() => _storage.delete(key: 'appPin');
 
   static Future<Map<String, String>> _headers() async {
     final token = await getToken();

@@ -2,6 +2,10 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import '../theme/app_colors.dart';
 
+import 'package:provider/provider.dart';
+import '../services/auth_service.dart';
+import '../services/api_service.dart';
+
 class SettingsScreen extends StatefulWidget {
   const SettingsScreen({super.key});
 
@@ -10,16 +14,18 @@ class SettingsScreen extends StatefulWidget {
 }
 
 class _SettingsScreenState extends State<SettingsScreen> {
-  bool _pinEnabled = false;
   bool _biometricsEnabled = false;
 
   @override
   Widget build(BuildContext context) {
+    final auth = context.watch<AuthService>();
     return Scaffold(
-      backgroundColor: AppColors.background,
+      backgroundColor: const Color(0xFF0F0F1A),
       appBar: AppBar(
-        title: const Text('Sozlamalar'),
-        leading: IconButton(icon: const Icon(Icons.arrow_back), onPressed: () => context.go('/')),
+        backgroundColor: Colors.transparent,
+        elevation: 0,
+        leading: IconButton(icon: const Icon(Icons.arrow_back, color: Colors.white), onPressed: () => context.pop()),
+        title: const Text('Sozlamalar', style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold)),
       ),
       body: ListView(
         padding: const EdgeInsets.all(20),
@@ -38,9 +44,13 @@ class _SettingsScreenState extends State<SettingsScreen> {
           _buildSwitchItem(
             icon: Icons.pin_outlined,
             title: "Ilovaga kirishda parol qo'yish",
-            value: _pinEnabled,
+            value: auth.hasPin,
             onChanged: (val) {
-              setState(() => _pinEnabled = val);
+              if (val) {
+                context.push('/pin_setup').then((_) => auth.initialize());
+              } else {
+                ApiService.clearPin().then((_) => auth.initialize());
+              }
             },
           ),
           _buildSwitchItem(
