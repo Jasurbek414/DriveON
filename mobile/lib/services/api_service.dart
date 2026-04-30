@@ -3,7 +3,7 @@ import 'package:http/http.dart' as http;
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 
 class ApiService {
-  static const String baseUrl = 'http://172.25.80.1:8080';
+  static const String baseUrl = 'http://192.168.23.181:8080';
   static const _storage = FlutterSecureStorage();
 
   static Future<String?> getToken() => _storage.read(key: 'accessToken');

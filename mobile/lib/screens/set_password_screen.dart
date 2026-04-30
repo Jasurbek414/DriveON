@@ -33,8 +33,9 @@ class _SetPasswordScreenState extends State<SetPasswordScreen> {
       body: Container(
         decoration: const BoxDecoration(gradient: AppColors.backgroundGradient),
         child: SafeArea(
-          child: Padding(padding: const EdgeInsets.all(24), child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-            IconButton(icon: const Icon(Icons.arrow_back, color: Colors.white), onPressed: () => context.go('/phone')),
+          child: SingleChildScrollView(
+            child: Padding(padding: const EdgeInsets.all(24), child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+              IconButton(icon: const Icon(Icons.arrow_back, color: Colors.white), onPressed: () => context.go('/phone')),
             const SizedBox(height: 32),
             const Text('Parol yarating', style: TextStyle(color: Colors.white, fontSize: 24, fontWeight: FontWeight.bold)),
             const SizedBox(height: 8),
@@ -57,7 +58,7 @@ class _SetPasswordScreenState extends State<SetPasswordScreen> {
               onPressed: _loading ? null : _register,
               child: _loading ? const SizedBox(width: 20, height: 20, child: CircularProgressIndicator(strokeWidth: 2, color: Colors.white)) : const Text("Ro'yxatdan o'tish"),
             )),
-          ])),
+          ]))),
         ),
       ),
     );
