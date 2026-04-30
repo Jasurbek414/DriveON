@@ -78,13 +78,10 @@ class _PinScreenState extends State<PinScreen> {
         : "Kirish parolini kiriting";
 
     return Scaffold(
-      backgroundColor: const Color(0xFF0F0F1A),
-      appBar: widget.isSetup ? AppBar(
-        backgroundColor: Colors.transparent,
-        elevation: 0,
-        leading: IconButton(icon: const Icon(Icons.arrow_back, color: Colors.white), onPressed: () => context.pop()),
-      ) : null,
-      body: SafeArea(
+      body: Container(
+        width: double.infinity,
+        decoration: const BoxDecoration(gradient: AppColors.backgroundGradient),
+        child: SafeArea(
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
@@ -118,19 +115,19 @@ class _PinScreenState extends State<PinScreen> {
               padding: const EdgeInsets.symmetric(horizontal: 40, vertical: 20),
               child: Column(
                 children: [
-                  Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [
+                  Row(mainAxisAlignment: MainAxisAlignment.spaceEvenly, children: [
                     _buildKey('1'), _buildKey('2'), _buildKey('3'),
                   ]),
                   const SizedBox(height: 24),
-                  Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [
+                  Row(mainAxisAlignment: MainAxisAlignment.spaceEvenly, children: [
                     _buildKey('4'), _buildKey('5'), _buildKey('6'),
                   ]),
                   const SizedBox(height: 24),
-                  Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [
+                  Row(mainAxisAlignment: MainAxisAlignment.spaceEvenly, children: [
                     _buildKey('7'), _buildKey('8'), _buildKey('9'),
                   ]),
                   const SizedBox(height: 24),
-                  Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [
+                  Row(mainAxisAlignment: MainAxisAlignment.spaceEvenly, children: [
                     const SizedBox(width: 72),
                     _buildKey('0'),
                     GestureDetector(
@@ -149,6 +146,7 @@ class _PinScreenState extends State<PinScreen> {
             const SizedBox(height: 40),
           ],
         ),
+      ),
       ),
     );
   }

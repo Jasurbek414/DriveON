@@ -7,10 +7,10 @@ spring:
 
   # H2 for development, PostgreSQL for production
   datasource:
-    url: jdbc:h2:file:./data/driveon;DB_CLOSE_DELAY=-1;DB_CLOSE_ON_EXIT=FALSE
-    driver-class-name: org.h2.Driver
-    username: sa
-    password:
+    url: jdbc:postgresql://localhost:5432/driveon
+    driver-class-name: org.postgresql.Driver
+    username: driveon
+    password: driveon123
 
   h2:
     console:

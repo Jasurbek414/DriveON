@@ -31,7 +31,7 @@ class AppRouter {
       if (isLoading) return null;
       
       if (isAuth) {
-        if (auth.isPinLocked && state.matchedLocation != '/pin') return '/pin';
+        if (auth.isPinLocked && state.matchedLocation != '/pin' && state.matchedLocation != '/pin_setup') return '/pin';
         if (!auth.isPinLocked && state.matchedLocation == '/pin') return '/';
         if (isAuthRoute) return '/';
         return null;
