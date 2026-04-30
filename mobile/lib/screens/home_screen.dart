@@ -66,7 +66,17 @@ class _HomeScreenState extends State<HomeScreen> {
                   ],
                 ),
               ]),
-              const SizedBox(height: 32),
+              const SizedBox(height: 28),
+
+              // Weather & Currency (Minimalist Info Row)
+              Row(
+                children: [
+                  Expanded(child: _miniWidget(Icons.wb_sunny_rounded, "Toshkent", "+24°C", AppColors.warning)),
+                  const SizedBox(width: 14),
+                  Expanded(child: _miniWidget(Icons.attach_money_rounded, "USD kurs", "12 650", AppColors.success)),
+                ],
+              ),
+              const SizedBox(height: 28),
 
               // myID Banner (Premium Glass)
               Container(
@@ -173,5 +183,30 @@ class _HomeScreenState extends State<HomeScreen> {
         Icon(Icons.arrow_forward_ios, color: Colors.white.withOpacity(0.2), size: 16),
       ]),
     ));
+  }
+
+  Widget _miniWidget(IconData icon, String title, String value, Color color) {
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
+      decoration: BoxDecoration(
+        color: Colors.white.withOpacity(0.02),
+        borderRadius: BorderRadius.circular(16),
+        border: Border.all(color: Colors.white.withOpacity(0.05)),
+      ),
+      child: Row(
+        children: [
+          Icon(icon, color: color.withOpacity(0.8), size: 20),
+          const SizedBox(width: 12),
+          Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(title, style: TextStyle(color: Colors.white.withOpacity(0.4), fontSize: 11, letterSpacing: 0.5)),
+              const SizedBox(height: 2),
+              Text(value, style: const TextStyle(color: Colors.white, fontSize: 14, fontWeight: FontWeight.bold, letterSpacing: 0.3)),
+            ],
+          ),
+        ],
+      ),
+    );
   }
 }
