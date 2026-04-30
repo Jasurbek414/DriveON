@@ -12,7 +12,6 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
 import java.util.Set;
 
 @Service
@@ -25,35 +24,52 @@ public class AuthService {
     private final PasswordEncoder passwordEncoder;
 
     public AuthResponse login(LoginRequest request) {
+        // Support login by phone or username
+        String identifier = request.getUsername();
+        User user = userRepository.findByPhoneNumber(identifier)
+                .or(() -> userRepository.findByUsernameOrEmail(identifier, identifier))
+                .orElseThrow(() -> new RuntimeException("Foydalanuvchi topilmadi"));
+
         Authentication authentication = authenticationManager.authenticate(
-                new UsernamePasswordAuthenticationToken(
-                        request.getUsername(),
-                        request.getPassword()
-                )
+                new UsernamePasswordAuthenticationToken(user.getUsername(), request.getPassword())
         );
 
         String accessToken = tokenProvider.generateAccessToken(authentication);
-        String refreshToken = tokenProvider.generateRefreshToken(request.getUsername());
+        String refreshToken = tokenProvider.generateRefreshToken(user.getUsername());
 
-        User user = userRepository.findByUsernameOrEmail(
-                request.getUsername(), request.getUsername()
-        ).orElseThrow();
+        return AuthResponse.of(accessToken, refreshToken, tokenProvider.getExpirationMs(), toUserDto(user));
+    }
 
-        return AuthResponse.of(
-                accessToken,
-                refreshToken,
-                tokenProvider.getExpirationMs(),
-                toUserDto(user)
-        );
+    @Transactional
+    public AuthResponse registerByPhone(String phoneNumber, String password) {
+        if (userRepository.existsByPhoneNumber(phoneNumber)) {
+            throw new RuntimeException("Bu raqam allaqachon ro'yxatdan o'tgan");
+        }
+
+        String username = "user_" + phoneNumber.replaceAll("[^0-9]", "");
+        User user = User.builder()
+                .username(username)
+                .phoneNumber(phoneNumber)
+                .password(passwordEncoder.encode(password))
+                .phoneVerified(true)
+                .roles(Set.of(Role.ROLE_USER))
+                .active(true)
+                .build();
+        user = userRepository.save(user);
+
+        String accessToken = tokenProvider.generateAccessToken(username);
+        String refreshToken = tokenProvider.generateRefreshToken(username);
+
+        return AuthResponse.of(accessToken, refreshToken, tokenProvider.getExpirationMs(), toUserDto(user));
     }
 
     @Transactional
     public AuthResponse register(RegisterRequest request) {
         if (userRepository.existsByUsername(request.getUsername())) {
-            throw new RuntimeException("Bu username band: " + request.getUsername());
+            throw new RuntimeException("Bu username band");
         }
-        if (userRepository.existsByEmail(request.getEmail())) {
-            throw new RuntimeException("Bu email band: " + request.getEmail());
+        if (request.getEmail() != null && userRepository.existsByEmail(request.getEmail())) {
+            throw new RuntimeException("Bu email band");
         }
 
         User user = User.builder()
@@ -65,49 +81,33 @@ public class AuthService {
                 .roles(Set.of(Role.ROLE_USER))
                 .active(true)
                 .build();
-
         user = userRepository.save(user);
 
         String accessToken = tokenProvider.generateAccessToken(user.getUsername());
         String refreshToken = tokenProvider.generateRefreshToken(user.getUsername());
 
-        return AuthResponse.of(
-                accessToken,
-                refreshToken,
-                tokenProvider.getExpirationMs(),
-                toUserDto(user)
-        );
+        return AuthResponse.of(accessToken, refreshToken, tokenProvider.getExpirationMs(), toUserDto(user));
     }
 
     public AuthResponse refreshToken(String refreshToken) {
-        if (!tokenProvider.validateToken(refreshToken)) {
-            throw new RuntimeException("Refresh token yaroqsiz");
-        }
+        if (!tokenProvider.validateToken(refreshToken)) throw new RuntimeException("Refresh token yaroqsiz");
         String username = tokenProvider.getUsernameFromToken(refreshToken);
-        String newAccessToken = tokenProvider.generateAccessToken(username);
-        String newRefreshToken = tokenProvider.generateRefreshToken(username);
-
+        String newAccess = tokenProvider.generateAccessToken(username);
+        String newRefresh = tokenProvider.generateRefreshToken(username);
         User user = userRepository.findByUsername(username).orElseThrow();
+        return AuthResponse.of(newAccess, newRefresh, tokenProvider.getExpirationMs(), toUserDto(user));
+    }
 
-        return AuthResponse.of(
-                newAccessToken,
-                newRefreshToken,
-                tokenProvider.getExpirationMs(),
-                toUserDto(user)
-        );
+    public boolean isPhoneRegistered(String phone) {
+        return userRepository.existsByPhoneNumber(phone);
     }
 
     private UserDto toUserDto(User user) {
         return UserDto.builder()
-                .id(user.getId())
-                .username(user.getUsername())
-                .email(user.getEmail())
-                .fullName(user.getFullName())
-                .phoneNumber(user.getPhoneNumber())
-                .avatarUrl(user.getAvatarUrl())
-                .active(user.getActive())
-                .roles(user.getRoles())
-                .createdAt(user.getCreatedAt())
+                .id(user.getId()).username(user.getUsername()).email(user.getEmail())
+                .fullName(user.getFullName()).phoneNumber(user.getPhoneNumber())
+                .avatarUrl(user.getAvatarUrl()).active(user.getActive())
+                .roles(user.getRoles()).createdAt(user.getCreatedAt())
                 .build();
     }
 }

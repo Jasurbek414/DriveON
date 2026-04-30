@@ -20,42 +20,33 @@ class AuthService extends ChangeNotifier {
     try {
       _user = await ApiService.getMe();
       _isAuthenticated = true;
-    } catch (_) {
-      await ApiService.clearTokens();
-    }
-    _isLoading = false;
-    notifyListeners();
+    } catch (_) { await ApiService.clearTokens(); }
+    _isLoading = false; notifyListeners();
   }
 
-  Future<bool> login(String username, String password) async {
+  Future<bool> login(String phone, String password) async {
     _error = null; _isLoading = true; notifyListeners();
     try {
-      final res = await ApiService.login(username, password);
+      final res = await ApiService.login(phone, password);
       await ApiService.saveTokens(res['accessToken'], res['refreshToken']);
-      _user = res['user'];
-      _isAuthenticated = true;
-      _isLoading = false; notifyListeners();
-      return true;
+      _user = res['user']; _isAuthenticated = true;
+      _isLoading = false; notifyListeners(); return true;
     } catch (e) {
       _error = e.toString().replaceFirst('Exception: ', '');
-      _isLoading = false; notifyListeners();
-      return false;
+      _isLoading = false; notifyListeners(); return false;
     }
   }
 
-  Future<bool> register(Map<String, dynamic> data) async {
+  Future<bool> registerByPhone(String phone, String password) async {
     _error = null; _isLoading = true; notifyListeners();
     try {
-      final res = await ApiService.register(data);
+      final res = await ApiService.registerByPhone(phone, password);
       await ApiService.saveTokens(res['accessToken'], res['refreshToken']);
-      _user = res['user'];
-      _isAuthenticated = true;
-      _isLoading = false; notifyListeners();
-      return true;
+      _user = res['user']; _isAuthenticated = true;
+      _isLoading = false; notifyListeners(); return true;
     } catch (e) {
       _error = e.toString().replaceFirst('Exception: ', '');
-      _isLoading = false; notifyListeners();
-      return false;
+      _isLoading = false; notifyListeners(); return false;
     }
   }
 

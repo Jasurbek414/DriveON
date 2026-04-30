@@ -3,7 +3,7 @@ import 'package:http/http.dart' as http;
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 
 class ApiService {
-  static const String baseUrl = 'http://10.0.2.2:8080'; // Android emulator localhost
+  static const String baseUrl = 'http://10.0.2.2:8080';
   static const _storage = FlutterSecureStorage();
 
   static Future<String?> getToken() => _storage.read(key: 'accessToken');
@@ -18,53 +18,58 @@ class ApiService {
 
   static Future<Map<String, String>> _headers() async {
     final token = await getToken();
-    return {
-      'Content-Type': 'application/json',
-      if (token != null) 'Authorization': 'Bearer $token',
-    };
+    return {'Content-Type': 'application/json', if (token != null) 'Authorization': 'Bearer $token'};
   }
 
-  static Future<dynamic> get(String endpoint) async {
-    final res = await http.get(Uri.parse('$baseUrl$endpoint'), headers: await _headers());
-    return _handleResponse(res);
+  static Future<dynamic> get(String ep) async {
+    final r = await http.get(Uri.parse('$baseUrl$ep'), headers: await _headers());
+    return _handle(r);
   }
 
-  static Future<dynamic> post(String endpoint, Map<String, dynamic> body) async {
-    final res = await http.post(Uri.parse('$baseUrl$endpoint'), headers: await _headers(), body: jsonEncode(body));
-    return _handleResponse(res);
+  static Future<dynamic> post(String ep, Map<String, dynamic> body) async {
+    final r = await http.post(Uri.parse('$baseUrl$ep'), headers: await _headers(), body: jsonEncode(body));
+    return _handle(r);
   }
 
-  static Future<dynamic> patch(String endpoint, [Map<String, dynamic>? body]) async {
-    final res = await http.patch(Uri.parse('$baseUrl$endpoint'), headers: await _headers(), body: body != null ? jsonEncode(body) : null);
-    return _handleResponse(res);
+  static Future<dynamic> patch(String ep, [Map<String, dynamic>? body]) async {
+    final r = await http.patch(Uri.parse('$baseUrl$ep'), headers: await _headers(), body: body != null ? jsonEncode(body) : null);
+    return _handle(r);
   }
 
-  static dynamic _handleResponse(http.Response res) {
-    if (res.statusCode >= 200 && res.statusCode < 300) {
-      return res.body.isNotEmpty ? jsonDecode(res.body) : null;
-    } else if (res.statusCode == 401) {
-      clearTokens();
-      throw Exception('Sessiya tugadi');
-    } else {
-      final err = res.body.isNotEmpty ? jsonDecode(res.body) : {};
-      throw Exception(err['message'] ?? 'Xatolik: ${res.statusCode}');
-    }
+  static Future<dynamic> delete(String ep) async {
+    final r = await http.delete(Uri.parse('$baseUrl$ep'), headers: await _headers());
+    return _handle(r);
+  }
+
+  static dynamic _handle(http.Response r) {
+    if (r.statusCode >= 200 && r.statusCode < 300) return r.body.isNotEmpty ? jsonDecode(r.body) : null;
+    if (r.statusCode == 401) { clearTokens(); throw Exception('Sessiya tugadi'); }
+    final err = r.body.isNotEmpty ? jsonDecode(r.body) : {};
+    throw Exception(err['message'] ?? 'Xatolik: ${r.statusCode}');
   }
 
   // Auth
-  static Future<Map<String, dynamic>> login(String username, String password) =>
-      post('/api/auth/login', {'username': username, 'password': password});
-  static Future<Map<String, dynamic>> register(Map<String, dynamic> data) =>
-      post('/api/auth/register', data);
+  static Future<dynamic> sendOtp(String phone) => post('/api/auth/otp/send', {'phoneNumber': phone});
+  static Future<dynamic> verifyOtp(String phone, String code) => post('/api/auth/otp/verify', {'phoneNumber': phone, 'code': code});
+  static Future<dynamic> checkPhone(String phone) => get('/api/auth/check-phone?phone=$phone');
+  static Future<dynamic> login(String username, String password) => post('/api/auth/login', {'username': username, 'password': password});
+  static Future<dynamic> registerByPhone(String phone, String password) => post('/api/auth/register/phone', {'phoneNumber': phone, 'password': password});
+  static Future<dynamic> getMe() => get('/api/users/me');
 
-  // Users
-  static Future<Map<String, dynamic>> getMe() => get('/api/users/me');
+  // Vehicles
+  static Future<dynamic> getVehicles() => get('/api/vehicles');
+  static Future<dynamic> addVehicle(Map<String, dynamic> data) => post('/api/vehicles', data);
+  static Future<dynamic> deleteVehicle(int id) => delete('/api/vehicles/$id');
 
-  // Orders
-  static Future<Map<String, dynamic>> getOrders({int page = 0, int size = 20}) =>
-      get('/api/orders?page=$page&size=$size');
-  static Future<Map<String, dynamic>> createOrder(Map<String, dynamic> data) =>
-      post('/api/orders', data);
-  static Future<Map<String, dynamic>> getDashboardStats() =>
-      get('/api/orders/dashboard/stats');
+  // Fines
+  static Future<dynamic> getFines() => get('/api/fines');
+  static Future<dynamic> getUnpaidFines() => get('/api/fines/unpaid');
+  static Future<dynamic> getUnpaidCount() => get('/api/fines/count');
+
+  // Cards & Payments
+  static Future<dynamic> getCards() => get('/api/payments/cards');
+  static Future<dynamic> addCard(Map<String, dynamic> data) => post('/api/payments/cards', data);
+  static Future<dynamic> deleteCard(int id) => delete('/api/payments/cards/$id');
+  static Future<dynamic> payFine(int fineId, int cardId) => post('/api/payments/fine/$fineId?cardId=$cardId', {});
+  static Future<dynamic> getPaymentHistory() => get('/api/payments/history');
 }
