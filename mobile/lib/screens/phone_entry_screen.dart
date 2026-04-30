@@ -38,11 +38,14 @@ class _PhoneEntryScreenState extends State<PhoneEntryScreen> {
       body: Container(
         decoration: const BoxDecoration(gradient: AppColors.backgroundGradient),
         child: SafeArea(
-          child: SingleChildScrollView(
-            child: Padding(
-              padding: const EdgeInsets.all(24),
-              child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-              const SizedBox(height: 60),
+          child: LayoutBuilder(
+            builder: (context, constraints) => SingleChildScrollView(
+              child: ConstrainedBox(
+                constraints: BoxConstraints(minHeight: constraints.maxHeight),
+                child: Padding(
+                  padding: const EdgeInsets.all(24),
+                  child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+                    const SizedBox(height: 60),
               Center(child: ShaderMask(
                 shaderCallback: (b) => AppColors.primaryGradient.createShader(b),
                 child: const Text('🚗 DriveON', style: TextStyle(fontSize: 32, fontWeight: FontWeight.bold, color: Colors.white)),
@@ -88,8 +91,10 @@ class _PhoneEntryScreenState extends State<PhoneEntryScreen> {
               Center(child: Text("Kirish orqali foydalanish shartlariga\nrozilik bildirasiz", textAlign: TextAlign.center,
                 style: TextStyle(color: Colors.white.withOpacity(0.3), fontSize: 12))),
             ]),
+                  ),
+                ),
+              ),
             ),
-          ),
         ),
       ),
     );

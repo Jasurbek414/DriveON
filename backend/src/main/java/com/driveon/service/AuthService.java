@@ -42,23 +42,28 @@ public class AuthService {
 
     @Transactional
     public AuthResponse registerByPhone(String phoneNumber, String password) {
-        if (userRepository.existsByPhoneNumber(phoneNumber)) {
-            throw new RuntimeException("Bu raqam allaqachon ro'yxatdan o'tgan");
+        User user = userRepository.findByPhoneNumber(phoneNumber).orElse(null);
+        
+        if (user != null) {
+            // Reset password for existing user
+            user.setPassword(passwordEncoder.encode(password));
+            user = userRepository.save(user);
+        } else {
+            // Create new user
+            String username = "user_" + phoneNumber.replaceAll("[^0-9]", "");
+            user = User.builder()
+                    .username(username)
+                    .phoneNumber(phoneNumber)
+                    .password(passwordEncoder.encode(password))
+                    .phoneVerified(true)
+                    .roles(Set.of(Role.ROLE_USER))
+                    .active(true)
+                    .build();
+            user = userRepository.save(user);
         }
 
-        String username = "user_" + phoneNumber.replaceAll("[^0-9]", "");
-        User user = User.builder()
-                .username(username)
-                .phoneNumber(phoneNumber)
-                .password(passwordEncoder.encode(password))
-                .phoneVerified(true)
-                .roles(Set.of(Role.ROLE_USER))
-                .active(true)
-                .build();
-        user = userRepository.save(user);
-
-        String accessToken = tokenProvider.generateAccessToken(username);
-        String refreshToken = tokenProvider.generateRefreshToken(username);
+        String accessToken = tokenProvider.generateAccessToken(user.getUsername());
+        String refreshToken = tokenProvider.generateRefreshToken(user.getUsername());
 
         return AuthResponse.of(accessToken, refreshToken, tokenProvider.getExpirationMs(), toUserDto(user));
     }

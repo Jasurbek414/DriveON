@@ -33,18 +33,21 @@ class _SetPasswordScreenState extends State<SetPasswordScreen> {
       body: Container(
         decoration: const BoxDecoration(gradient: AppColors.backgroundGradient),
         child: SafeArea(
-          child: SingleChildScrollView(
-            child: Padding(padding: const EdgeInsets.all(24), child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-              IconButton(icon: const Icon(Icons.arrow_back, color: Colors.white), onPressed: () => context.go('/phone')),
+          child: LayoutBuilder(
+            builder: (context, constraints) => SingleChildScrollView(
+              child: ConstrainedBox(
+                constraints: BoxConstraints(minHeight: constraints.maxHeight),
+                child: Padding(padding: const EdgeInsets.all(24), child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+                  IconButton(icon: const Icon(Icons.arrow_back, color: Colors.white), onPressed: () => context.go('/phone')),
             const SizedBox(height: 32),
             const Text('Parol yarating', style: TextStyle(color: Colors.white, fontSize: 24, fontWeight: FontWeight.bold)),
             const SizedBox(height: 8),
             Text("Hisobingiz uchun parol o'rnating", style: TextStyle(color: Colors.white.withOpacity(0.5))),
             const SizedBox(height: 32),
-            if (_error != null) Container(
+            if (_error != null || context.watch<AuthService>().error != null) Container(
               padding: const EdgeInsets.all(12), margin: const EdgeInsets.only(bottom: 16),
               decoration: BoxDecoration(color: AppColors.error.withOpacity(0.1), borderRadius: BorderRadius.circular(12)),
-              child: Text(_error!, style: const TextStyle(color: AppColors.error, fontSize: 13)),
+              child: Text(_error ?? context.watch<AuthService>().error!, style: const TextStyle(color: AppColors.error, fontSize: 13)),
             ),
             TextField(controller: _pass, obscureText: true,
               style: const TextStyle(color: Colors.white),
@@ -58,9 +61,13 @@ class _SetPasswordScreenState extends State<SetPasswordScreen> {
               onPressed: _loading ? null : _register,
               child: _loading ? const SizedBox(width: 20, height: 20, child: CircularProgressIndicator(strokeWidth: 2, color: Colors.white)) : const Text("Ro'yxatdan o'tish"),
             )),
-          ]))),
+          ]),
         ),
       ),
-    );
-  }
+    ),
+  ),
+),
+),
+);
+}
 }
