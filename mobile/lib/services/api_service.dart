@@ -85,7 +85,7 @@ class ApiService {
   // Auth
   static Future<dynamic> sendOtp(String phone) => post('/api/auth/otp/send', {'phoneNumber': phone});
   static Future<dynamic> verifyOtp(String phone, String code) => post('/api/auth/otp/verify', {'phoneNumber': phone, 'code': code});
-  static Future<dynamic> checkPhone(String phone) => get('/api/auth/check-phone?phone=$phone');
+  static Future<dynamic> checkPhone(String phone) => get('/api/auth/check-phone?phone=${Uri.encodeComponent(phone)}');
   static Future<dynamic> login(String username, String password) => post('/api/auth/login', {'username': username, 'password': password});
   static Future<dynamic> registerByPhone(String phone, String password) => post('/api/auth/register/phone', {'phoneNumber': phone, 'password': password});
   static Future<dynamic> getMe() => get('/api/users/me');

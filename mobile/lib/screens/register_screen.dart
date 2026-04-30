@@ -15,7 +15,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
   String? _error;
 
   Future<void> _register() async {
-    final phone = _phoneCtrl.text.trim();
+    final phone = _phoneCtrl.text.replaceAll(' ', '');
     if (phone.length < 13) { setState(() => _error = "To'liq raqam kiriting"); return; }
     setState(() { _loading = true; _error = null; });
     try {

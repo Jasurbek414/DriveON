@@ -15,7 +15,7 @@ class _PhoneEntryScreenState extends State<PhoneEntryScreen> {
   String? _error;
 
   Future<void> _next() async {
-    final phone = _ctrl.text.trim();
+    final phone = _ctrl.text.replaceAll(' ', '');
     if (phone.length < 13) { setState(() => _error = "To'liq raqam kiriting"); return; }
     setState(() { _loading = true; _error = null; });
     try {
