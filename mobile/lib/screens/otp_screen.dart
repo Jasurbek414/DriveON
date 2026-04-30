@@ -12,11 +12,11 @@ class OtpScreen extends StatefulWidget {
 }
 
 class _OtpScreenState extends State<OtpScreen> {
-  final List<TextEditingController> _ctrls = List.generate(6, (_) => TextEditingController());
-  final List<FocusNode> _nodes = List.generate(6, (_) => FocusNode());
+  final List<TextEditingController> _ctrls = List.generate(4, (_) => TextEditingController());
+  final List<FocusNode> _nodes = List.generate(4, (_) => FocusNode());
   bool _loading = false;
   String? _error;
-  int _timer = 180;
+  int _timer = 120;
 
   @override
   void initState() { super.initState(); _startTimer(); _nodes[0].requestFocus(); }
@@ -33,7 +33,7 @@ class _OtpScreenState extends State<OtpScreen> {
   String get _code => _ctrls.map((c) => c.text).join();
 
   Future<void> _verify() async {
-    if (_code.length < 6) { setState(() => _error = "6 raqam kiriting"); return; }
+    if (_code.length < 4) { setState(() => _error = "4 raqam kiriting"); return; }
     setState(() { _loading = true; _error = null; });
     try {
       await ApiService.verifyOtp(widget.phone, _code);
@@ -59,24 +59,34 @@ class _OtpScreenState extends State<OtpScreen> {
               const Text('SMS tasdiqlash', style: TextStyle(color: Colors.white, fontSize: 24, fontWeight: FontWeight.bold)),
               const SizedBox(height: 8),
               Text('${widget.phone} raqamiga kod yuborildi', style: TextStyle(color: Colors.white.withOpacity(0.5))),
+              const SizedBox(height: 12),
+              // Dev hint
+              Container(
+                padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+                decoration: BoxDecoration(color: AppColors.primary.withOpacity(0.08), borderRadius: BorderRadius.circular(10), border: Border.all(color: AppColors.primary.withOpacity(0.2))),
+                child: Text('💡 Test rejim: kod 1234', style: TextStyle(color: AppColors.primary.withOpacity(0.7), fontSize: 12)),
+              ),
               const SizedBox(height: 32),
-              Row(mainAxisAlignment: MainAxisAlignment.spaceEvenly, children: List.generate(6, (i) =>
-                SizedBox(width: 48, height: 56, child: TextField(
-                  controller: _ctrls[i], focusNode: _nodes[i],
-                  textAlign: TextAlign.center, maxLength: 1,
-                  keyboardType: TextInputType.number,
-                  inputFormatters: [FilteringTextInputFormatter.digitsOnly],
-                  style: const TextStyle(color: Colors.white, fontSize: 22, fontWeight: FontWeight.bold),
-                  decoration: InputDecoration(counterText: '', contentPadding: const EdgeInsets.symmetric(vertical: 14)),
-                  onChanged: (v) {
-                    if (v.isNotEmpty && i < 5) _nodes[i + 1].requestFocus();
-                    if (v.isEmpty && i > 0) _nodes[i - 1].requestFocus();
-                    if (_code.length == 6) _verify();
-                  },
-                )),
+              Row(mainAxisAlignment: MainAxisAlignment.center, children: List.generate(4, (i) =>
+                Container(
+                  width: 60, height: 68, margin: EdgeInsets.only(right: i < 3 ? 16 : 0),
+                  child: TextField(
+                    controller: _ctrls[i], focusNode: _nodes[i],
+                    textAlign: TextAlign.center, maxLength: 1,
+                    keyboardType: TextInputType.number,
+                    inputFormatters: [FilteringTextInputFormatter.digitsOnly],
+                    style: const TextStyle(color: Colors.white, fontSize: 28, fontWeight: FontWeight.bold),
+                    decoration: InputDecoration(counterText: '', contentPadding: const EdgeInsets.symmetric(vertical: 16)),
+                    onChanged: (v) {
+                      if (v.isNotEmpty && i < 3) _nodes[i + 1].requestFocus();
+                      if (v.isEmpty && i > 0) _nodes[i - 1].requestFocus();
+                      if (_code.length == 4) _verify();
+                    },
+                  ),
+                ),
               )),
               if (_error != null) Padding(padding: const EdgeInsets.only(top: 16),
-                child: Text(_error!, style: const TextStyle(color: AppColors.error, fontSize: 13), textAlign: TextAlign.center)),
+                child: Center(child: Text(_error!, style: const TextStyle(color: AppColors.error, fontSize: 13)))),
               const SizedBox(height: 24),
               Center(child: Text('${_timer ~/ 60}:${(_timer % 60).toString().padLeft(2, '0')}',
                 style: TextStyle(color: _timer > 0 ? Colors.white.withOpacity(0.5) : AppColors.primary, fontSize: 16))),

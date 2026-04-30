@@ -19,7 +19,9 @@ public class SmsService {
 
     @Transactional
     public String sendOtp(String phoneNumber) {
-        String code = String.format("%06d", random.nextInt(999999));
+        // DEV MODE: hardcoded 4-digit code "1234"
+        // TODO: Integrate real SMS gateway (Eskiz.uz, PlayMobile, etc.)
+        String code = "1234";
 
         OtpVerification otp = OtpVerification.builder()
                 .phoneNumber(phoneNumber)
@@ -28,10 +30,9 @@ public class SmsService {
                 .build();
         otpRepository.save(otp);
 
-        // TODO: Integrate real SMS gateway (Eskiz.uz, PlayMobile, etc.)
-        log.info("📱 SMS OTP sent to {}: {}", phoneNumber, code);
+        log.info("📱 [DEV] SMS OTP for {}: {} (hardcoded)", phoneNumber, code);
 
-        return code; // In production, do NOT return the code
+        return code;
     }
 
     @Transactional
