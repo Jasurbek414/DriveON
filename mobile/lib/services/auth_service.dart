@@ -21,31 +21,37 @@ class AuthService extends ChangeNotifier {
 
   Future<void> initialize() async {
     print("--- AUTH INITIALIZE STARTED ---");
-    final token = await ApiService.getToken();
-    print("TOKEN: $token");
-    if (token == null) { _isLoading = false; notifyListeners(); return; }
-    
-    _isAuthenticated = true;
-    final pin = await ApiService.getPin();
-    _hasPin = pin != null;
-    if (_hasPin) _isPinLocked = true;
-
     try {
-      _user = await ApiService.getMe();
-      print("GET ME SUCCESS: $_user");
-    } catch (e) { 
-      print("GET ME EXCEPTION: $e");
-      if (e.toString().contains('Sessiya tugadi')) {
-        print("CLEARING TOKENS BECAUSE SESSIYA TUGADI!");
-        _isAuthenticated = false;
-        _hasPin = false;
-        _isPinLocked = false;
-        await ApiService.clearTokens();
-        await ApiService.clearPin();
+      final token = await ApiService.getToken();
+      print("TOKEN: $token");
+      if (token == null) return;
+      
+      _isAuthenticated = true;
+      final pin = await ApiService.getPin();
+      _hasPin = pin != null;
+      if (_hasPin) _isPinLocked = true;
+
+      try {
+        _user = await ApiService.getMe();
+        print("GET ME SUCCESS: $_user");
+      } catch (e) { 
+        print("GET ME EXCEPTION: $e");
+        if (e.toString().contains('Sessiya tugadi')) {
+          print("CLEARING TOKENS BECAUSE SESSIYA TUGADI!");
+          _isAuthenticated = false;
+          _hasPin = false;
+          _isPinLocked = false;
+          await ApiService.clearTokens();
+          await ApiService.clearPin();
+        }
       }
+    } catch (e) {
+      print("CRITICAL INIT ERROR: $e");
+    } finally {
+      print("--- AUTH INITIALIZE FINISHED, isAuth: $_isAuthenticated ---");
+      _isLoading = false; 
+      notifyListeners();
     }
-    print("--- AUTH INITIALIZE FINISHED, isAuth: $_isAuthenticated ---");
-    _isLoading = false; notifyListeners();
   }
 
   void unlockPin() {

@@ -20,27 +20,28 @@ import '../screens/pin_screen.dart';
 import '../screens/splash_screen.dart';
 
 class AppRouter {
-  static final router = GoRouter(
-    initialLocation: '/splash',
-    redirect: (context, state) {
-      final auth = context.read<AuthService>();
-      final isAuth = auth.isAuthenticated;
-      final isLoading = auth.isLoading;
-      final authRoutes = ['/phone', '/register', '/otp', '/password', '/set-password'];
-      final isAuthRoute = authRoutes.contains(state.matchedLocation);
-      
-      if (isLoading) return state.matchedLocation == '/splash' ? null : '/splash';
-      
-      if (isAuth) {
-        if (auth.isPinLocked && state.matchedLocation != '/pin' && state.matchedLocation != '/pin_setup') return '/pin';
-        if (!auth.isPinLocked && state.matchedLocation == '/pin') return '/';
-        if (isAuthRoute || state.matchedLocation == '/splash') return '/';
+  static GoRouter createRouter(AuthService auth) {
+    return GoRouter(
+      initialLocation: '/splash',
+      refreshListenable: auth,
+      redirect: (context, state) {
+        final isAuth = auth.isAuthenticated;
+        final isLoading = auth.isLoading;
+        final authRoutes = ['/phone', '/register', '/otp', '/password', '/set-password'];
+        final isAuthRoute = authRoutes.contains(state.matchedLocation);
+        
+        if (isLoading) return state.matchedLocation == '/splash' ? null : '/splash';
+        
+        if (isAuth) {
+          if (auth.isPinLocked && state.matchedLocation != '/pin' && state.matchedLocation != '/pin_setup') return '/pin';
+          if (!auth.isPinLocked && state.matchedLocation == '/pin') return '/';
+          if (isAuthRoute || state.matchedLocation == '/splash') return '/';
+          return null;
+        } else {
+          if (!isAuthRoute) return '/phone';
+        }
         return null;
-      } else {
-        if (!isAuthRoute) return '/phone';
-      }
-      return null;
-    },
+      },
     routes: [
       GoRoute(path: '/splash', builder: (_, __) => const SplashScreen()),
       GoRoute(path: '/pin', builder: (_, __) => const PinScreen()),
@@ -65,6 +66,7 @@ class AppRouter {
       ),
     ],
   );
+  }
 }
 
 class MainShell extends StatefulWidget {

@@ -17,8 +17,15 @@ void main() {
   );
 }
 
-class DriveOnApp extends StatelessWidget {
+class DriveOnApp extends StatefulWidget {
   const DriveOnApp({super.key});
+
+  @override
+  State<DriveOnApp> createState() => _DriveOnAppState();
+}
+
+class _DriveOnAppState extends State<DriveOnApp> {
+  late final _router = AppRouter.createRouter(context.read<AuthService>());
 
   @override
   Widget build(BuildContext context) {
@@ -80,7 +87,7 @@ class DriveOnApp extends StatelessWidget {
           shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
         ),
       ),
-      routerConfig: AppRouter.router,
+      routerConfig: _router,
     );
   }
 }

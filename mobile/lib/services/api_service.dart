@@ -32,16 +32,22 @@ class ApiService {
   }
 
   static Future<String?> getPin() async {
-    final prefs = await SharedPreferences.getInstance();
-    return prefs.getString('appPin');
+    try {
+      final prefs = await SharedPreferences.getInstance();
+      return prefs.getString('appPin');
+    } catch (_) { return null; }
   }
   static Future<void> setPin(String pin) async {
-    final prefs = await SharedPreferences.getInstance();
-    await prefs.setString('appPin', pin);
+    try {
+      final prefs = await SharedPreferences.getInstance();
+      await prefs.setString('appPin', pin);
+    } catch (_) {}
   }
   static Future<void> clearPin() async {
-    final prefs = await SharedPreferences.getInstance();
-    await prefs.remove('appPin');
+    try {
+      final prefs = await SharedPreferences.getInstance();
+      await prefs.remove('appPin');
+    } catch (_) {}
   }
 
   static Future<Map<String, String>> _headers() async {
