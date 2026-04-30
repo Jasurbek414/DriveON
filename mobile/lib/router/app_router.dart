@@ -91,13 +91,12 @@ class _MainShellState extends State<MainShell> {
           indicatorColor: const Color(0xFF6366F1).withOpacity(0.2),
           onDestinationSelected: (i) {
             setState(() => _i = i);
-            switch (i) { case 0: context.go('/'); case 1: context.go('/vehicles'); case 2: context.go('/fines'); case 3: context.go('/profile'); }
+            switch (i) { case 0: context.go('/'); case 1: context.go('/vehicles'); case 2: context.go('/fines'); }
           },
           destinations: const [
             NavigationDestination(icon: Icon(Icons.home_rounded), label: 'Asosiy'),
             NavigationDestination(icon: Icon(Icons.directions_car_rounded), label: 'Mashinalar'),
             NavigationDestination(icon: Icon(Icons.receipt_long_rounded), label: 'Jarimalar'),
-            NavigationDestination(icon: Icon(Icons.person_rounded), label: 'Profil'),
           ],
         ),
       ),

@@ -36,8 +36,16 @@ class _HomeScreenState extends State<HomeScreen> {
         child: ListView(padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 16), children: [
           // Header
           Row(children: [
-            Container(width: 46, height: 46, decoration: const BoxDecoration(shape: BoxShape.circle, gradient: AppColors.primaryGradient),
-              child: Center(child: Text(user?['fullName']?.substring(0, 1) ?? 'ðŸ‘¤', style: const TextStyle(color: Colors.white, fontSize: 18, fontWeight: FontWeight.bold)))),
+            InkWell(
+              onTap: () => context.go('/profile'),
+              borderRadius: BorderRadius.circular(23),
+              child: Container(width: 46, height: 46, decoration: const BoxDecoration(shape: BoxShape.circle, gradient: AppColors.primaryGradient),
+                child: Center(
+                  child: Text(user?['fullName'] != null && user!['fullName'].isNotEmpty ? user['fullName'].substring(0, 1).toUpperCase() : 'A', 
+                    style: const TextStyle(color: Colors.white, fontSize: 18, fontWeight: FontWeight.bold))
+                )
+              ),
+            ),
             const SizedBox(width: 14),
             Expanded(child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
               Text('Xush kelibsiz,', style: TextStyle(color: Colors.white.withOpacity(0.5), fontSize: 12, letterSpacing: 0.5)),
