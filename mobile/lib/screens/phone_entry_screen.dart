@@ -23,8 +23,7 @@ class _PhoneEntryScreenState extends State<PhoneEntryScreen> {
       if (check['registered'] == true) {
         if (mounted) context.go('/password', extra: phone);
       } else {
-        await ApiService.sendOtp(phone);
-        if (mounted) context.go('/otp', extra: phone);
+        setState(() => _error = "Akkount topilmadi. Iltimos, ro'yxatdan o'ting.");
       }
     } catch (e) {
       setState(() => _error = e.toString().replaceFirst('Exception: ', ''));
@@ -70,11 +69,29 @@ class _PhoneEntryScreenState extends State<PhoneEntryScreen> {
                   onPressed: _loading ? null : _next,
                   child: _loading
                     ? const SizedBox(width: 20, height: 20, child: CircularProgressIndicator(strokeWidth: 2, color: Colors.white))
-                    : const Text('Davom etish'),
+                    : const Text('Kirish'),
                 ),
               ),
+              const SizedBox(height: 16),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Text("Akkountingiz yo'qmi?", style: TextStyle(color: Colors.white.withOpacity(0.5))),
+                  TextButton(
+                    onPressed: () {
+                      final phone = _ctrl.text.trim();
+                      if (phone.length == 13) {
+                         ApiService.sendOtp(phone).then((_) => context.go('/otp', extra: phone));
+                      } else {
+                         setState(() => _error = "Iltimos, avval raqamni to'liq kiriting");
+                      }
+                    },
+                    child: const Text("Ro'yxatdan o'tish", style: TextStyle(color: AppColors.primary, fontWeight: FontWeight.bold)),
+                  ),
+                ],
+              ),
               const Spacer(),
-              Center(child: Text("Davom etish orqali foydalanish shartlariga\nrozilik bildirasiz", textAlign: TextAlign.center,
+              Center(child: Text("Kirish orqali foydalanish shartlariga\nrozilik bildirasiz", textAlign: TextAlign.center,
                 style: TextStyle(color: Colors.white.withOpacity(0.3), fontSize: 12))),
             ]),
           ),

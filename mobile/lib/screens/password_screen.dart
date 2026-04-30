@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:go_router/go_router.dart';
 import '../services/auth_service.dart';
+import '../services/api_service.dart';
 import '../theme/app_colors.dart';
 
 class PasswordScreen extends StatefulWidget {
@@ -22,6 +23,18 @@ class _PasswordScreenState extends State<PasswordScreen> {
     final ok = await auth.login(widget.phone, _ctrl.text);
     setState(() => _loading = false);
     if (ok && mounted) context.go('/');
+  }
+
+  Future<void> _forgotPassword() async {
+    setState(() => _loading = true);
+    try {
+      await ApiService.sendOtp(widget.phone);
+      if (mounted) context.go('/otp', extra: widget.phone);
+    } catch (e) {
+      if (mounted) ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(e.toString()), backgroundColor: Colors.red));
+    } finally {
+      if (mounted) setState(() => _loading = false);
+    }
   }
 
   @override
@@ -49,7 +62,14 @@ class _PasswordScreenState extends State<PasswordScreen> {
               decoration: InputDecoration(hintText: 'Parol', prefixIcon: const Icon(Icons.lock_outline),
                 suffixIcon: IconButton(icon: Icon(_obscure ? Icons.visibility_off : Icons.visibility, color: Colors.white38),
                   onPressed: () => setState(() => _obscure = !_obscure)))),
-            const SizedBox(height: 24),
+            Align(
+              alignment: Alignment.centerRight,
+              child: TextButton(
+                onPressed: _loading ? null : _forgotPassword,
+                child: Text('Parolni unutdingizmi?', style: TextStyle(color: Colors.white.withOpacity(0.6), fontSize: 13)),
+              ),
+            ),
+            const SizedBox(height: 8),
             SizedBox(width: double.infinity, height: 52, child: ElevatedButton(
               onPressed: _loading ? null : _login,
               child: _loading ? const SizedBox(width: 20, height: 20, child: CircularProgressIndicator(strokeWidth: 2, color: Colors.white)) : const Text('Kirish'),

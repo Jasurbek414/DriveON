@@ -46,7 +46,12 @@ class _HomeScreenState extends State<HomeScreen> {
               ])),
               Container(
                 decoration: BoxDecoration(color: Colors.white.withOpacity(0.05), borderRadius: BorderRadius.circular(12)),
-                child: IconButton(icon: const Icon(Icons.notifications_none, color: Colors.white54), onPressed: () {}),
+                child: Row(
+                  children: [
+                    IconButton(icon: const Icon(Icons.settings, color: Colors.white54), onPressed: () => context.go('/settings')),
+                    IconButton(icon: const Icon(Icons.notifications_none, color: Colors.white54), onPressed: () {}),
+                  ],
+                ),
               ),
             ]),
             const SizedBox(height: 28),

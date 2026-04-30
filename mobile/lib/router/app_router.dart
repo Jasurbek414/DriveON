@@ -13,6 +13,7 @@ import '../screens/fines_screen.dart';
 import '../screens/cards_screen.dart';
 import '../screens/add_card_screen.dart';
 import '../screens/profile_screen.dart';
+import '../screens/settings_screen.dart';
 
 class AppRouter {
   static final router = GoRouter(
@@ -43,6 +44,7 @@ class AppRouter {
           GoRoute(path: '/cards', builder: (_, __) => const CardsScreen()),
           GoRoute(path: '/cards/add', builder: (_, __) => const AddCardScreen()),
           GoRoute(path: '/profile', builder: (_, __) => const ProfileScreen()),
+          GoRoute(path: '/settings', builder: (_, __) => const SettingsScreen()),
         ],
       ),
     ],
