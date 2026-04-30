@@ -110,18 +110,17 @@ class _HomeScreenState extends State<HomeScreen> {
               const SizedBox(height: 28),
 
               // Quick Menu
-              Text("Asosiy xizmatlar", style: TextStyle(color: Colors.white.withOpacity(0.9), fontSize: 16, fontWeight: FontWeight.bold, letterSpacing: 0.3)),
               const SizedBox(height: 12),
-              GridView.count(crossAxisCount: 2, crossAxisSpacing: 10, mainAxisSpacing: 10, shrinkWrap: true,
-                physics: const NeverScrollableScrollPhysics(), childAspectRatio: 1.6,
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  _menuCard(Icons.directions_car_rounded, 'Mashinalar', AppColors.primary, () => context.go('/vehicles')),
-                  _menuCard(Icons.receipt_long_rounded, 'Jarimalar', AppColors.warning, () => context.go('/fines'), badge: _finesCount > 0 ? '$_finesCount' : null),
-                  _menuCard(Icons.credit_card_rounded, 'Kartalar', AppColors.success, () => context.go('/cards')),
-                  _menuCard(Icons.shield_rounded, "Sug'urta", AppColors.secondary, () {}),
+                  _actionButton(Icons.directions_car_rounded, 'Mashina', AppColors.primary, () => context.go('/vehicles')),
+                  _actionButton(Icons.receipt_long_rounded, 'Jarima', AppColors.warning, () => context.go('/fines'), badge: _finesCount > 0 ? '$_finesCount' : null),
+                  _actionButton(Icons.credit_card_rounded, 'Karta', AppColors.success, () => context.go('/cards')),
+                  _actionButton(Icons.shield_rounded, "Sug'urta", AppColors.secondary, () {}),
                 ],
               ),
-              const SizedBox(height: 24),
+              const SizedBox(height: 32),
 
               // Info section
               Text("Boshqa xizmatlar", style: TextStyle(color: Colors.white.withOpacity(0.9), fontSize: 16, fontWeight: FontWeight.bold, letterSpacing: 0.3)),
@@ -148,28 +147,38 @@ class _HomeScreenState extends State<HomeScreen> {
     );
   }
 
-  Widget _menuCard(IconData icon, String label, Color color, VoidCallback onTap, {String? badge}) {
-    return GestureDetector(onTap: onTap, child: Container(
-      padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
-      decoration: BoxDecoration(
-        gradient: LinearGradient(begin: Alignment.topLeft, end: Alignment.bottomRight, colors: [Colors.white.withOpacity(0.05), Colors.white.withOpacity(0.01)]),
-        borderRadius: BorderRadius.circular(16), 
-        border: Border.all(color: Colors.white.withOpacity(0.08)),
-      ),
-      child: Column(crossAxisAlignment: CrossAxisAlignment.start, mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [
-        Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, crossAxisAlignment: CrossAxisAlignment.start, children: [
+  Widget _actionButton(IconData icon, String label, Color color, VoidCallback onTap, {String? badge}) {
+    return GestureDetector(
+      onTap: onTap,
+      child: Column(
+        children: [
           Container(
-            padding: const EdgeInsets.all(8),
-            decoration: BoxDecoration(color: color.withOpacity(0.15), shape: BoxShape.circle),
-            child: Icon(icon, color: color, size: 20),
+            width: 64, height: 64,
+            decoration: BoxDecoration(
+              gradient: LinearGradient(begin: Alignment.topLeft, end: Alignment.bottomRight, colors: [Colors.white.withOpacity(0.06), Colors.white.withOpacity(0.02)]),
+              borderRadius: BorderRadius.circular(18), 
+              border: Border.all(color: Colors.white.withOpacity(0.08)),
+            ),
+            child: Stack(
+              clipBehavior: Clip.none,
+              children: [
+                Center(child: Icon(icon, color: color.withOpacity(0.9), size: 26)),
+                if (badge != null) Positioned(
+                  top: -6, right: -6,
+                  child: Container(
+                    padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 4),
+                    decoration: BoxDecoration(color: AppColors.error, borderRadius: BorderRadius.circular(10)),
+                    child: Text(badge, style: const TextStyle(color: Colors.white, fontSize: 11, fontWeight: FontWeight.bold)),
+                  ),
+                ),
+              ],
+            ),
           ),
-          if (badge != null) Container(padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
-            decoration: BoxDecoration(color: AppColors.error, borderRadius: BorderRadius.circular(10), boxShadow: [BoxShadow(color: AppColors.error.withOpacity(0.3), blurRadius: 8, offset: const Offset(0, 2))]),
-            child: Text(badge, style: const TextStyle(color: Colors.white, fontSize: 11, fontWeight: FontWeight.bold))),
-        ]),
-        Text(label, style: const TextStyle(color: Colors.white, fontSize: 13, fontWeight: FontWeight.w600, letterSpacing: 0.2)),
-      ]),
-    ));
+          const SizedBox(height: 10),
+          Text(label, style: const TextStyle(color: Colors.white, fontSize: 12, fontWeight: FontWeight.w500, letterSpacing: 0.3)),
+        ],
+      ),
+    );
   }
 
   Widget _compactWidget(IconData icon, String title, String value, Color color) {
