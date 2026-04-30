@@ -112,8 +112,8 @@ class _HomeScreenState extends State<HomeScreen> {
               // Quick Menu
               Text("Asosiy xizmatlar", style: TextStyle(color: Colors.white.withOpacity(0.9), fontSize: 16, fontWeight: FontWeight.bold, letterSpacing: 0.3)),
               const SizedBox(height: 12),
-              GridView.count(crossAxisCount: 2, crossAxisSpacing: 12, mainAxisSpacing: 12, shrinkWrap: true,
-                physics: const NeverScrollableScrollPhysics(), childAspectRatio: 1.25,
+              GridView.count(crossAxisCount: 2, crossAxisSpacing: 10, mainAxisSpacing: 10, shrinkWrap: true,
+                physics: const NeverScrollableScrollPhysics(), childAspectRatio: 1.6,
                 children: [
                   _menuCard(Icons.directions_car_rounded, 'Mashinalar', AppColors.primary, () => context.go('/vehicles')),
                   _menuCard(Icons.receipt_long_rounded, 'Jarimalar', AppColors.warning, () => context.go('/fines'), badge: _finesCount > 0 ? '$_finesCount' : null),
@@ -121,7 +121,7 @@ class _HomeScreenState extends State<HomeScreen> {
                   _menuCard(Icons.shield_rounded, "Sug'urta", AppColors.secondary, () {}),
                 ],
               ),
-              const SizedBox(height: 28),
+              const SizedBox(height: 24),
 
               // Info section
               Text("Boshqa xizmatlar", style: TextStyle(color: Colors.white.withOpacity(0.9), fontSize: 16, fontWeight: FontWeight.bold, letterSpacing: 0.3)),
@@ -150,10 +150,10 @@ class _HomeScreenState extends State<HomeScreen> {
 
   Widget _menuCard(IconData icon, String label, Color color, VoidCallback onTap, {String? badge}) {
     return GestureDetector(onTap: onTap, child: Container(
-      padding: const EdgeInsets.all(14),
+      padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
       decoration: BoxDecoration(
         gradient: LinearGradient(begin: Alignment.topLeft, end: Alignment.bottomRight, colors: [Colors.white.withOpacity(0.05), Colors.white.withOpacity(0.01)]),
-        borderRadius: BorderRadius.circular(20), 
+        borderRadius: BorderRadius.circular(16), 
         border: Border.all(color: Colors.white.withOpacity(0.08)),
       ),
       child: Column(crossAxisAlignment: CrossAxisAlignment.start, mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [
@@ -161,13 +161,13 @@ class _HomeScreenState extends State<HomeScreen> {
           Container(
             padding: const EdgeInsets.all(8),
             decoration: BoxDecoration(color: color.withOpacity(0.15), shape: BoxShape.circle),
-            child: Icon(icon, color: color, size: 22),
+            child: Icon(icon, color: color, size: 20),
           ),
           if (badge != null) Container(padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
             decoration: BoxDecoration(color: AppColors.error, borderRadius: BorderRadius.circular(10), boxShadow: [BoxShadow(color: AppColors.error.withOpacity(0.3), blurRadius: 8, offset: const Offset(0, 2))]),
             child: Text(badge, style: const TextStyle(color: Colors.white, fontSize: 11, fontWeight: FontWeight.bold))),
         ]),
-        Text(label, style: const TextStyle(color: Colors.white, fontSize: 14, fontWeight: FontWeight.w600, letterSpacing: 0.2)),
+        Text(label, style: const TextStyle(color: Colors.white, fontSize: 13, fontWeight: FontWeight.w600, letterSpacing: 0.2)),
       ]),
     ));
   }
