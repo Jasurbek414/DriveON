@@ -66,45 +66,54 @@ class _HomeScreenState extends State<HomeScreen> {
                   ],
                 ),
               ]),
-              const SizedBox(height: 28),
+              const SizedBox(height: 20),
 
-              // Weather & Currency (Minimalist Info Row)
-              Row(
-                children: [
-                  Expanded(child: _miniWidget(Icons.wb_sunny_rounded, "Toshkent", "+24°C", AppColors.warning)),
-                  const SizedBox(width: 14),
-                  Expanded(child: _miniWidget(Icons.attach_money_rounded, "USD kurs", "12 650", AppColors.success)),
-                ],
+              // Weather & Currencies (Compact Horizontal Scroll)
+              SizedBox(
+                height: 56,
+                child: ListView(
+                  scrollDirection: Axis.horizontal,
+                  physics: const BouncingScrollPhysics(),
+                  children: [
+                    _compactWidget(Icons.wb_sunny_rounded, "Toshkent", "+22°C", Colors.orangeAccent),
+                    const SizedBox(width: 10),
+                    _compactWidget(Icons.attach_money_rounded, "USD", "12 650", Colors.greenAccent),
+                    const SizedBox(width: 10),
+                    _compactWidget(Icons.euro_rounded, "EUR", "13 500", Colors.blueAccent),
+                    const SizedBox(width: 10),
+                    _compactWidget(Icons.currency_ruble_rounded, "RUB", "140", Colors.redAccent),
+                  ],
+                ),
               ),
-              const SizedBox(height: 28),
+              const SizedBox(height: 20),
 
               // myID Banner (Premium Glass)
               Container(
-                padding: const EdgeInsets.symmetric(horizontal: 18, vertical: 20),
+                padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
                 decoration: BoxDecoration(
                   gradient: LinearGradient(begin: Alignment.topLeft, end: Alignment.bottomRight, colors: [Colors.white.withOpacity(0.06), Colors.white.withOpacity(0.02)]),
-                  borderRadius: BorderRadius.circular(20),
+                  borderRadius: BorderRadius.circular(16),
                   border: Border.all(color: Colors.white.withOpacity(0.08)),
                 ),
                 child: Row(children: [
-                  Container(padding: const EdgeInsets.all(12), decoration: BoxDecoration(color: AppColors.primary.withOpacity(0.15), shape: BoxShape.circle),
-                    child: const Icon(Icons.verified_user_rounded, color: AppColors.primary, size: 22)),
-                  const SizedBox(width: 16),
+                  Container(padding: const EdgeInsets.all(10), decoration: BoxDecoration(color: AppColors.primary.withOpacity(0.15), shape: BoxShape.circle),
+                    child: const Icon(Icons.verified_user_rounded, color: AppColors.primary, size: 20)),
+                  const SizedBox(width: 14),
                   Expanded(child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-                    const Text("To'liq identifikatsiyadan o'ting", style: TextStyle(color: Colors.white, fontSize: 15, fontWeight: FontWeight.w600)),
-                    const SizedBox(height: 4),
-                    Text('myID yoki myGov yordamida', style: TextStyle(color: Colors.white.withOpacity(0.5), fontSize: 13)),
+                    const Text("To'liq identifikatsiya", style: TextStyle(color: Colors.white, fontSize: 14, fontWeight: FontWeight.w600)),
+                    const SizedBox(height: 2),
+                    Text('myID yoki myGov yordamida', style: TextStyle(color: Colors.white.withOpacity(0.5), fontSize: 12)),
                   ])),
-                  Icon(Icons.arrow_forward_ios, color: Colors.white.withOpacity(0.3), size: 16),
+                  Icon(Icons.arrow_forward_ios, color: Colors.white.withOpacity(0.3), size: 14),
                 ]),
               ),
-              const SizedBox(height: 36),
+              const SizedBox(height: 28),
 
               // Quick Menu
-              Text("Asosiy xizmatlar", style: TextStyle(color: Colors.white.withOpacity(0.9), fontSize: 18, fontWeight: FontWeight.bold, letterSpacing: 0.3)),
-              const SizedBox(height: 16),
-              GridView.count(crossAxisCount: 2, crossAxisSpacing: 16, mainAxisSpacing: 16, shrinkWrap: true,
-                physics: const NeverScrollableScrollPhysics(), childAspectRatio: 1.1,
+              Text("Asosiy xizmatlar", style: TextStyle(color: Colors.white.withOpacity(0.9), fontSize: 16, fontWeight: FontWeight.bold, letterSpacing: 0.3)),
+              const SizedBox(height: 12),
+              GridView.count(crossAxisCount: 2, crossAxisSpacing: 12, mainAxisSpacing: 12, shrinkWrap: true,
+                physics: const NeverScrollableScrollPhysics(), childAspectRatio: 1.25,
                 children: [
                   _menuCard(Icons.directions_car_rounded, 'Mashinalar', AppColors.primary, () => context.go('/vehicles')),
                   _menuCard(Icons.receipt_long_rounded, 'Jarimalar', AppColors.warning, () => context.go('/fines'), badge: _finesCount > 0 ? '$_finesCount' : null),
@@ -112,11 +121,11 @@ class _HomeScreenState extends State<HomeScreen> {
                   _menuCard(Icons.shield_rounded, "Sug'urta", AppColors.secondary, () {}),
                 ],
               ),
-              const SizedBox(height: 36),
+              const SizedBox(height: 28),
 
               // Info section
-              Text("Boshqa xizmatlar", style: TextStyle(color: Colors.white.withOpacity(0.9), fontSize: 18, fontWeight: FontWeight.bold, letterSpacing: 0.3)),
-              const SizedBox(height: 16),
+              Text("Boshqa xizmatlar", style: TextStyle(color: Colors.white.withOpacity(0.9), fontSize: 16, fontWeight: FontWeight.bold, letterSpacing: 0.3)),
+              const SizedBox(height: 12),
               _serviceRow(Icons.search_rounded, "Jarima qidirish", "Davlat raqami orqali topish", () {}),
               _serviceRow(Icons.history_rounded, "To'lovlar tarixi", "Barcha amaliyotlar", () {}),
               _serviceRow(Icons.headset_mic_rounded, "Qo'llab-quvvatlash", "Yordam va savollar", () {}),
@@ -130,37 +139,64 @@ class _HomeScreenState extends State<HomeScreen> {
   Widget _iconBtn(IconData icon, VoidCallback onTap) {
     return InkWell(
       onTap: onTap,
-      borderRadius: BorderRadius.circular(14),
+      borderRadius: BorderRadius.circular(12),
       child: Container(
-        width: 44, height: 44,
-        decoration: BoxDecoration(color: Colors.white.withOpacity(0.04), borderRadius: BorderRadius.circular(14), border: Border.all(color: Colors.white.withOpacity(0.08))),
-        child: Icon(icon, color: Colors.white.withOpacity(0.9), size: 22),
+        width: 40, height: 40,
+        decoration: BoxDecoration(color: Colors.white.withOpacity(0.04), borderRadius: BorderRadius.circular(12), border: Border.all(color: Colors.white.withOpacity(0.08))),
+        child: Icon(icon, color: Colors.white.withOpacity(0.9), size: 20),
       ),
     );
   }
 
   Widget _menuCard(IconData icon, String label, Color color, VoidCallback onTap, {String? badge}) {
     return GestureDetector(onTap: onTap, child: Container(
-      padding: const EdgeInsets.all(16),
+      padding: const EdgeInsets.all(14),
       decoration: BoxDecoration(
         gradient: LinearGradient(begin: Alignment.topLeft, end: Alignment.bottomRight, colors: [Colors.white.withOpacity(0.05), Colors.white.withOpacity(0.01)]),
-        borderRadius: BorderRadius.circular(24), 
+        borderRadius: BorderRadius.circular(20), 
         border: Border.all(color: Colors.white.withOpacity(0.08)),
       ),
       child: Column(crossAxisAlignment: CrossAxisAlignment.start, mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [
         Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, crossAxisAlignment: CrossAxisAlignment.start, children: [
           Container(
-            padding: const EdgeInsets.all(10),
+            padding: const EdgeInsets.all(8),
             decoration: BoxDecoration(color: color.withOpacity(0.15), shape: BoxShape.circle),
-            child: Icon(icon, color: color, size: 24),
+            child: Icon(icon, color: color, size: 22),
           ),
-          if (badge != null) Container(padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
-            decoration: BoxDecoration(color: AppColors.error, borderRadius: BorderRadius.circular(12), boxShadow: [BoxShadow(color: AppColors.error.withOpacity(0.3), blurRadius: 8, offset: const Offset(0, 2))]),
-            child: Text(badge, style: const TextStyle(color: Colors.white, fontSize: 12, fontWeight: FontWeight.bold))),
+          if (badge != null) Container(padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+            decoration: BoxDecoration(color: AppColors.error, borderRadius: BorderRadius.circular(10), boxShadow: [BoxShadow(color: AppColors.error.withOpacity(0.3), blurRadius: 8, offset: const Offset(0, 2))]),
+            child: Text(badge, style: const TextStyle(color: Colors.white, fontSize: 11, fontWeight: FontWeight.bold))),
         ]),
-        Text(label, style: const TextStyle(color: Colors.white, fontSize: 16, fontWeight: FontWeight.w600, letterSpacing: 0.2)),
+        Text(label, style: const TextStyle(color: Colors.white, fontSize: 14, fontWeight: FontWeight.w600, letterSpacing: 0.2)),
       ]),
     ));
+  }
+
+  Widget _compactWidget(IconData icon, String title, String value, Color color) {
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
+      decoration: BoxDecoration(
+        color: Colors.white.withOpacity(0.02),
+        borderRadius: BorderRadius.circular(16),
+        border: Border.all(color: Colors.white.withOpacity(0.04)),
+      ),
+      child: Row(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Icon(icon, color: color.withOpacity(0.9), size: 18),
+          const SizedBox(width: 10),
+          Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(title, style: TextStyle(color: Colors.white.withOpacity(0.4), fontSize: 10, letterSpacing: 0.5)),
+              const SizedBox(height: 2),
+              Text(value, style: const TextStyle(color: Colors.white, fontSize: 13, fontWeight: FontWeight.bold)),
+            ],
+          ),
+        ],
+      ),
+    );
   }
 
   Widget _serviceRow(IconData icon, String title, String sub, VoidCallback onTap) {
