@@ -1,5 +1,5 @@
 server:
-  port: 8080
+  port: 8083
 
 spring:
   application:
@@ -77,11 +77,16 @@ spring:
     username: ${DB_USERNAME:driveon}
     password: ${DB_PASSWORD:driveon123}
 
+server:
+  port: 8083
+
   h2:
     console:
       enabled: false
 
   jpa:
+    hibernate:
+      ddl-auto: update
     properties:
       hibernate:
         dialect: org.hibernate.dialect.PostgreSQLDialect

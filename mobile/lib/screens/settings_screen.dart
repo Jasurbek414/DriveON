@@ -28,6 +28,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
         title: const Text('Sozlamalar', style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold)),
       ),
       body: ListView(
+        physics: const BouncingScrollPhysics(parent: AlwaysScrollableScrollPhysics()),
         padding: const EdgeInsets.all(20),
         children: [
           _buildSectionHeader("Identifikatsiya"),
@@ -60,6 +61,34 @@ class _SettingsScreenState extends State<SettingsScreen> {
             value: _biometricsEnabled,
             onChanged: (val) {
               setState(() => _biometricsEnabled = val);
+            },
+          ),
+          const SizedBox(height: 24),
+          _buildSectionHeader("Qo'shimcha va Yordam"),
+          _buildActionItem(
+            icon: Icons.search_rounded,
+            title: "Jarima qidirish",
+            subtitle: "Davlat raqami orqali topish",
+            onTap: () {
+              ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Hali ishlab chiqilmoqda...')));
+            },
+          ),
+          const SizedBox(height: 12),
+          _buildActionItem(
+            icon: Icons.history_rounded,
+            title: "To'lovlar tarixi",
+            subtitle: "Barcha amaliyotlar ro'yxati",
+            onTap: () {
+              ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Hali ishlab chiqilmoqda...')));
+            },
+          ),
+          const SizedBox(height: 12),
+          _buildActionItem(
+            icon: Icons.headset_mic_rounded,
+            title: "Qo'llab-quvvatlash",
+            subtitle: "Yordam va savollar",
+            onTap: () {
+              ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Hali ishlab chiqilmoqda...')));
             },
           ),
         ],

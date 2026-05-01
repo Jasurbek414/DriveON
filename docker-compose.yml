@@ -1,8 +1,9 @@
 version: '3.8'
+
 services:
   postgres:
-    image: postgres:15-alpine
-    container_name: driveon_db
+    image: postgres:16-alpine
+    container_name: driveon-db
     environment:
       POSTGRES_DB: driveon
       POSTGRES_USER: driveon
@@ -11,6 +12,39 @@ services:
       - "5432:5432"
     volumes:
       - driveon_data:/var/lib/postgresql/data
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U driveon"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  backend:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    container_name: driveon-api
+    environment:
+      SPRING_PROFILES_ACTIVE: prod
+      DB_USERNAME: driveon
+      DB_PASSWORD: driveon123
+      SPRING_DATASOURCE_URL: jdbc:postgresql://postgres:5432/driveon
+    ports:
+      - "8080:8080"
+    depends_on:
+      postgres:
+        condition: service_healthy
+    restart: unless-stopped
+
+  web:
+    build:
+      context: ./web
+      dockerfile: Dockerfile
+    container_name: driveon-web
+    ports:
+      - "3000:80"
+    depends_on:
+      - backend
     restart: unless-stopped
 
 volumes:
